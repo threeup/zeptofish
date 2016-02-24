@@ -1,0 +1,20 @@
+{
+	"folders":
+	[
+		{
+			"file_exclude_patterns":
+			[
+				"*.meta"
+			],
+			"path": "Assets"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"*.meta"
+			],
+			"path": "targetweb"
+		}
+	],
+	"solution_file": "./zeptofish.sln"
+}
