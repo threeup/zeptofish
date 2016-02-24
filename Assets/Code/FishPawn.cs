@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class FishPawn : MonoBehaviour {
+public class FishPawn : BasePawn {
 
 	// Use this for initialization
 	void Start () {

@@ -1,7 +1,7 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
-public class BoatPawn : BasePawn {
+public class BasePawn : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
