@@ -3,6 +3,7 @@ using System.Collections;
 
 public class User : MonoBehaviour {
 
+    public PawnController controller;
 	// Use this for initialization
 	void Start () {
 	
