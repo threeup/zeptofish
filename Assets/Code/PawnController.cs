@@ -5,9 +5,10 @@ public class PawnController : MonoBehaviour {
 
     public enum ControllerBinding
     {
-        AI,
-        KEYBOARD,
-        CONTROLLER0,   
+        AI_DRIFT = 0,
+        AI_BRAIN = 1,
+        KEYBOARD = 2,
+        CONTROLLER0 = 3,   
     }
     public ControllerBinding binding;
     
@@ -17,7 +18,8 @@ public class PawnController : MonoBehaviour {
         switch(binding)
         {
             default:
-            case ControllerBinding.AI: break;
+            case ControllerBinding.AI_DRIFT: break;
+            case ControllerBinding.AI_BRAIN: break;
             case ControllerBinding.KEYBOARD: GetKeyboardInput(ref curInput); break;
             case ControllerBinding.CONTROLLER0: GetControllerInput(0, ref curInput); break;
         }

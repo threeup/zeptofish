@@ -8,8 +8,10 @@ public class Pawn : Actor {
     public PawnInputData curInput;
     
 	// Use this for initialization
-	void Start () {
-	
+	public override void Reset()
+    {
+	   base.Reset();
+       controller = GetComponent<PawnController>();
 	}
 	
 	// Update is called once per frame
@@ -22,6 +24,7 @@ public class Pawn : Actor {
         motor.SetDesiredMoveVector(desiredMoveVector);
         
         motor.UpdateMotor(deltaTime);
+        UpdateAttached();
     }
     
     

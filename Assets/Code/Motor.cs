@@ -3,18 +3,23 @@ using System.Collections;
 
 public class Motor : MonoBehaviour {
 
+    public bool canMove = true;
+    
     public Vector3 velocity;
     public Vector3 forceDirection;
     public float forceMultiplier;
-    public float forceAccel = 1.2f;
+    public float forceAccel;
     
-    public float frictionDecel = 0.6f;
+    public float frictionDecel;
     
-    public float speedMaximum = 3f;
+    public float speedMaximum;
 
 	// Use this for initialization
-	void Start () {
-	
+	void Reset () {
+        canMove = true;
+        forceAccel = 1.2f;
+        frictionDecel = 0.6f;
+        speedMaximum = 3f;
 	}
 	
     public virtual void SetDesiredMoveVector(Vector3 desiredMoveVector)
@@ -37,4 +42,9 @@ public class Motor : MonoBehaviour {
         this.transform.position = lastPosition + velocity*deltaTime; 
         
 	}
+    
+    public virtual void SetPosition(Vector3 pos)
+    {
+        this.transform.position = pos;
+    }
 }
