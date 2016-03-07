@@ -3,7 +3,9 @@ using System.Collections;
 
 public class Pawn : Actor {
 
+    [HideInInspector]
     public PawnController controller;
+    
     public PawnInputData lastInput;
     public PawnInputData curInput;
     
@@ -11,8 +13,14 @@ public class Pawn : Actor {
 	public override void Reset()
     {
 	   base.Reset();
-       controller = GetComponent<PawnController>();
 	}
+    
+    public override void Awake()
+    {
+        base.Awake();
+       controller = GetComponent<PawnController>();
+        
+    }
 	
 	// Update is called once per frame
 	public override void Update()

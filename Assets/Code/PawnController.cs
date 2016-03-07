@@ -3,14 +3,13 @@ using System.Collections;
 
 public class PawnController : MonoBehaviour {
 
-    public enum ControllerBinding
-    {
-        AI_DRIFT = 0,
-        AI_BRAIN = 1,
-        KEYBOARD = 2,
-        CONTROLLER0 = 3,   
-    }
+    
     public ControllerBinding binding;
+    
+    public void Reset()
+    {
+	   binding = ControllerBinding.NONE;
+    }
     
     public PawnInputData GetInput()
     {

@@ -19,6 +19,7 @@ public class FishMotor : Motor {
     public float sprintCost = 4f;
     public float swimCost = 2f;
     public float restCost = 3f;
+    public float wiggleSpeed = 1f;
     
     public float restThreshold = 3f;
     
@@ -87,4 +88,28 @@ public class FishMotor : Motor {
         energy = Mathf.Min(Mathf.Max(energy, 0f), maxEnergy);
         base.UpdateMotor(deltaTime);
     } 
+    
+    
+    void AddWiggle(float deltaTime)
+    {
+        body.transform.Rotate(Vector3.up, wiggleSpeed*deltaTime);
+        float yaw = body.transform.rotation.eulerAngles.y;
+        while( yaw > 90 )
+        {
+            yaw -= 180f;
+        }
+        while( yaw < -90 )
+        {
+            yaw += 180f;
+        }
+        float maxYaw = 15f;
+        if( yaw > maxYaw )
+        {
+            wiggleSpeed = -Mathf.Abs(wiggleSpeed);
+        }
+        if( yaw < -maxYaw )
+        {
+            wiggleSpeed = Mathf.Abs(wiggleSpeed);
+        }
+    }
 }

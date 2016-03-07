@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class Rules {
 
-	public static List<Rule> rules;
+	public static Dictionary<int, Rule> genericRules;
     public static Dictionary<int, Dictionary<int, Rule>> intersectMap;
     
     public static void Setup()
@@ -24,9 +24,10 @@ public class Rules {
         intersectMap[(int)ActorType.BOAT] = boatDict;
         
         
-        rules = new List<Rule>();
-        rules.Add(new Rule());
-        rules.Add(new AttachRule());
+        genericRules = new Dictionary<int, Rule>();
+        genericRules[(int)ActorEventType.INTERSECT] = new AttachRule();
+        genericRules[(int)ActorEventType.SPAWN] = new SpawnRule();
+        genericRules[(int)ActorEventType.NOISE] = new Rule();
         
     }
     
@@ -50,24 +51,38 @@ public class Rules {
         return null;
     }
     
-    public static Rule GetGameRule(Actor source, Actor victim, ActorEventType aetype)
+    
+    public static Rule GetGameRule(ActorEventType aetype)
     {
-        return rules[0];
+        return genericRules[(int)aetype];
     }
 }
 
 public class Rule {
-    public virtual void Invoke(ActorEvent ae)
+    public virtual void Invoke(ref ActorEvent ae)
     {
         
     }
 }
 
 public class AttachRule : Rule {
-    public override void Invoke(ActorEvent ae)
+    public override void Invoke(ref ActorEvent ae)
     {
         Vector3 offsetPos = ae.victim.AttachBonePosition - ae.source.AttachBonePosition;
         float offset = Utils.GetOffsetAngle(offsetPos, ae.source.transform.forward);
         ae.source.AttachToParent(ae.victim, offset);
+    }
+}
+
+public class SpawnRule : Rule {
+    public override void Invoke(ref ActorEvent ae)
+    {
+        Spawner sourceSpawner = ae.source as Spawner;
+        Vector3 origin = sourceSpawner.AttachBonePosition;
+        float randomAngle = Utils.RandomAngle();
+        origin.x += Mathf.Sin(randomAngle)*UnityEngine.Random.Range(0f,sourceSpawner.scatterRadius);
+        origin.y += Mathf.Cos(randomAngle)*UnityEngine.Random.Range(0f,sourceSpawner.scatterRadius);
+        Vector3 forward = sourceSpawner.transform.forward;
+        ae.victim = World.Instance.Spawn(sourceSpawner, origin, forward).GetComponent<Actor>();
     }
 }

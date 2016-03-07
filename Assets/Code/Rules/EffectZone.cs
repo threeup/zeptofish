@@ -28,7 +28,7 @@ public class EffectZone : MonoBehaviour {
         if( r != null )
         {
             ActorEvent ae = new ActorEvent(owner, otherZone.owner, ActorEventType.INTERSECT);   
-            r.Invoke(ae);
+            r.Invoke(ref ae);
         }
         
     }

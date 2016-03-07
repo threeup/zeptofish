@@ -6,14 +6,21 @@ public class Actor : MonoBehaviour {
 
 
 	public ActorData ad = new ActorData();
+    public World.LiveableArea liveableArea;
+    
+    [HideInInspector]
     public Motor motor;
+    [HideInInspector]
+    public ActorBody body;
     
+    [HideInInspector]
     public float attachOffset = 0f;
-    
+    [HideInInspector]
     public Actor attachParent = null;
-    public List<Actor> attached = new List<Actor>();
     public Transform attachBone;
     public Vector3 AttachBonePosition { get { return attachBone.position; } }
+    [HideInInspector]
+    public List<Actor> attached = new List<Actor>();
 	
     public virtual void Reset()
     {
@@ -21,12 +28,17 @@ public class Actor : MonoBehaviour {
         ad.hp = 10;
         ad.speed = 10;
         ad.hunger = 10;  
-        motor = this.GetComponent<Motor>();
         foreach(Transform t in this.transform)
         {
             attachBone = t;
             break;
         }
+    }
+    
+    public virtual void Awake()
+    {
+        motor = this.GetComponent<Motor>();
+        body = this.GetComponentInChildren<ActorBody>();
     }
     
     public virtual void Update()
@@ -62,13 +74,13 @@ public class Actor : MonoBehaviour {
     
     public void SetPosition(Vector3 vec)
     {
-        motor.SetPosition(vec);
+        motor.SafeMove(vec);
     }
     
-    public virtual void HandleEvent(ActorEvent ae)
+    public virtual void HandleEvent(ref ActorEvent ae)
     {
-        Rule r = Rules.GetGameRule(ae.source, ae.victim, ae.aetype);
-        r.Invoke(ae);
+        Rule r = Rules.GetGameRule(ae.aetype);
+        r.Invoke(ref ae);
     }
     
     public void AttachChild(Actor other)

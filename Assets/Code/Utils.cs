@@ -21,4 +21,9 @@ public class Utils {
         while(angleDiff < -Mathf.PI) { angleDiff += Mathf.PI; }
         return angleDiff;
     }
+    
+    public static float RandomAngle()
+    {
+        return UnityEngine.Random.Range(0f,360f);
+    }
 }
