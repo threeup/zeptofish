@@ -1,8 +1,19 @@
 using UnityEngine;
 using System.Collections;
+using BasicCommon;
 
 public class Pawn : Actor {
 
+    
+    [SerializeField]
+    private int stomachCapacity;
+    [SerializeField]
+    private int stomach;
+    [SerializeField]
+    private float stomachPeriod;
+    
+    private BasicTimer stomachTimer;
+    
     [HideInInspector]
     public PawnController controller;
     
@@ -18,7 +29,19 @@ public class Pawn : Actor {
     public override void Awake()
     {
         base.Awake();
-       controller = GetComponent<PawnController>();
+        controller = GetComponent<PawnController>();
+        
+    }
+    
+    public override void Launch()
+    {
+        stomachPeriod = acfg.stomachPeriod;
+        if( stomachPeriod > 0.01f)
+        {
+            stomachTimer = new BasicTimer(acfg.stomachPeriod);
+        }
+        stomachCapacity = acfg.stomachCapacity;
+        stomach = stomachCapacity;
         
     }
 	
@@ -33,6 +56,21 @@ public class Pawn : Actor {
         
         motor.UpdateMotor(deltaTime);
         UpdateAttached();
+        
+        if( stomachTimer != null && stomachTimer.Tick(deltaTime) )
+        {
+            ad.stomach = Mathf.Max(ad.stomach-1,0);
+            if( ad.stomach == 0)
+            {
+                ad.hp -= 1;
+            }
+        }
+    }
+    
+    
+    public void AddToStomach(int amount)
+    {
+        ad.stomach = Mathf.Min(ad.stomach+amount, stomachCapacity);
     }
     
     

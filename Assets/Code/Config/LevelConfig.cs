@@ -2,12 +2,12 @@ using UnityEngine;
 using ProtoBuf;
 
 [ProtoContract]
-public class BoatConfig
+public class LevelConfig
 {
     [ProtoMember(1)]
-    public int nothing;
+    public int fishCount;
     [ProtoMember(2)]
-    public float speed;
+    public int fishMinLevel;
     [ProtoMember(3)]
-    public float size;
+    public int fishMaxLevel;
 }

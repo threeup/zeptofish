@@ -12,46 +12,34 @@ public class ConfigManager : MonoBehaviour
 
     public RuleConfig currentConfig;
     
-    /// <summary>
-    /// The file path we will be using
-    /// </summary>
-    private string configFilePath;
+    public RuleConfigCategory category;
+    
 
+    public static ConfigManager Instance;
+    
+    void Awake()
+    {
+        Instance = this;
+    }
     void Start()
     {
+        
         // Set the file path to Unity's Streaming Assets folder, location in
         // Assets/StreamingAssets/
-        configFilePath = Application.streamingAssetsPath + "/ConfigEasy.bytes";
-        SetupConfig();
+        string configFilePath = ConfigUtils.GetFilePath(category);
+        ConfigUtils.LoadConfig(configFilePath, out currentConfig);
     }
     
-    void SetupConfig()
+    public ActorConfig FindActorConfig(string name)
     {
-        currentConfig = new RuleConfig();
-
-        currentConfig.fishCfg = new FishConfig[1];
-        currentConfig.boatCfg = new BoatConfig();
-        
-        currentConfig.fishCfg[0] = new FishConfig();
-        currentConfig.fishCfg[0].type = FishType.Wizard;
-        currentConfig.fishCfg[0].speed = 3f;
-        
-        currentConfig.boatCfg.speed = UnityEngine.Random.Range(20, 40)/10f;
-    }
-
-
-    void OnGUI()
-    {
-        if(GUI.Button(new Rect(16, 256, 128, 64), "Save Game State"))
+        foreach(ActorConfig acfg in currentConfig.actorCfgs)
         {
-            ConfigUtils.SaveConfig(configFilePath, currentConfig);
-            Debug.Log("speed"+currentConfig.boatCfg.speed);
+            if( string.Compare(acfg.name, name) == 0 )
+            {
+                return acfg;
+            }
         }
-        if (GUI.Button(new Rect(16, 336, 128, 64), "Load Game State"))
-        {
-            ConfigUtils.LoadConfig(configFilePath, out currentConfig);
-            Debug.Log("speed"+currentConfig.boatCfg.speed);
-        }
+        return null;
     }
 
 }

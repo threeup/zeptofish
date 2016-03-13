@@ -1,12 +1,21 @@
 using UnityEngine;
 using ProtoBuf;
 
+public enum RuleConfigCategory
+{
+    Easy,
+    Hard,
+}
+    
 [ProtoContract]
 public class RuleConfig
 {
     [ProtoMember(1)]
-    public BoatConfig boatCfg;
+    public GameConfig gameCfg;
     
     [ProtoMember(2)]
-    public FishConfig[] fishCfg;
+    public LevelConfig[] levelCfgs;
+    
+    [ProtoMember(3)]
+    public ActorConfig[] actorCfgs;
 }

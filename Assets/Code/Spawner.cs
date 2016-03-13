@@ -4,7 +4,8 @@ using BasicCommon;
 
 public class Spawner : Actor {
 
-    public GameObject spawnPrefab;
+    public GameObject actorPrefab;
+    public string actorName;
     public ControllerBinding binding;
     
     public BasicTimer spawnTimer = null;

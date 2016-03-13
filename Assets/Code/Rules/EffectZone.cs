@@ -13,7 +13,7 @@ public class EffectZone : MonoBehaviour {
     public Actor owner;
     public EffectZoneType eztype;
     
-    public ActorType OwnerActorType { get { return owner.ad.atype; } } 
+    public ActorType OwnerActorType { get { return owner.acfg.atype; } } 
     
     public void Reset()
     {

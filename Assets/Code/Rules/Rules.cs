@@ -84,5 +84,7 @@ public class SpawnRule : Rule {
         origin.y += Mathf.Cos(randomAngle)*UnityEngine.Random.Range(0f,sourceSpawner.scatterRadius);
         Vector3 forward = sourceSpawner.transform.forward;
         ae.victim = World.Instance.Spawn(sourceSpawner, origin, forward).GetComponent<Actor>();
+        ae.victim.acfg = ConfigManager.Instance.FindActorConfig(sourceSpawner.actorName);
+        ae.victim.BroadcastMessage("Launch");
     }
 }

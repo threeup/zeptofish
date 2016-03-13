@@ -6,6 +6,7 @@ public class Actor : MonoBehaviour {
 
 
 	public ActorData ad = new ActorData();
+	public ActorConfig acfg = null;
     public World.LiveableArea liveableArea;
     
     [HideInInspector]
@@ -24,10 +25,6 @@ public class Actor : MonoBehaviour {
 	
     public virtual void Reset()
     {
-        ad.atype = ActorType.FISH;
-        ad.hp = 10;
-        ad.speed = 10;
-        ad.hunger = 10;  
         foreach(Transform t in this.transform)
         {
             attachBone = t;
@@ -39,6 +36,11 @@ public class Actor : MonoBehaviour {
     {
         motor = this.GetComponent<Motor>();
         body = this.GetComponentInChildren<ActorBody>();
+    }
+    
+    public virtual void Launch()
+    {
+        
     }
     
     public virtual void Update()

@@ -8,35 +8,38 @@ public class Motor : MonoBehaviour {
     
     public bool canMove = true;
     
-    public Vector3 velocity;
-    public float speed;
-    public Vector3 forceDirection;
-    public float forceMultiplier;
-    public float forceAccel;
+    protected Vector3 velocity;
+    protected float speed;
+    protected Vector3 forceDirection;
+    protected float forceMultiplier;
+    protected float forceAccel;
     
-    public float frictionDecel;
+    protected float frictionDecel;
     
-    public float friction;
+    protected float friction;
     
-    public float speedMaximum;
+    protected float speedMaximum;
         
     Vector3 motorForward = Vector3.one;
     public Vector3 MotorForward { get { return motorForward; } }
     
-
-	// Use this for initialization
 	void Reset () {
         canMove = true;
-        
-        forceAccel = 1.2f;
-        frictionDecel = 0.6f;
-        speedMaximum = 3f;
 	}
     
     void Awake()
     {
         actor = gameObject.GetComponent<Actor>();
         this.body = actor.body;
+    }
+    
+    public void Launch()
+    {
+        ActorConfig cfg = actor.acfg;
+        this.forceAccel = cfg.forceAccel;
+        this.frictionDecel = cfg.frictionDecel;
+        //this.rotationAccel = cfg.rotationAccel;
+        this.speedMaximum = cfg.speedMaximum;
     }
 	
     public virtual void SetDesiredMoveVector(Vector3 desiredMoveVector)

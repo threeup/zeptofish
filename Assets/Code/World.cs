@@ -35,7 +35,7 @@ public class World : SceneSingletonBehaviour<World> {
     public GameObject Spawn(Spawner spawner, Vector3 pos, Vector3 forward)
     {
         Quaternion rot = Quaternion.LookRotation(forward, Vector3.up);
-        GameObject go = GameObject.Instantiate(spawner.spawnPrefab, pos, rot) as GameObject;
+        GameObject go = GameObject.Instantiate(spawner.actorPrefab, pos, rot) as GameObject;
         spawner.remaining--;
         PawnController pawnController = go.GetComponent<PawnController>();
         if( pawnController != null )
