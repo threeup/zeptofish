@@ -12,7 +12,7 @@ public enum ActorType
 }
 
 [ProtoContract]
-public enum ActorModel
+public enum ActorSpecies
 {
     FoodSmall = 0,
     FoodLarge = 1,
@@ -26,17 +26,15 @@ public enum ActorModel
     BoatNormal = 30,
 }
 
-
-
 [ProtoContract]
 public class ActorConfig
 {
     [ProtoMember(1)]
-    public string name;
+    public string placeholder;
     [ProtoMember(2)]
     public ActorType atype;
     [ProtoMember(3)]
-    public ActorModel amodel;
+    public ActorSpecies aspecies;
     
     [ProtoMember(4)]
     public float scale;

@@ -71,7 +71,7 @@ public class FishMotor : Motor {
                 forceMultiplier *= 1f; 
                 break;
             case MoveRate.REST: 
-                forceMultiplier *= 0f; 
+                forceMultiplier *= 0.2f; 
                 break;
         }
     }
@@ -86,7 +86,68 @@ public class FishMotor : Motor {
             case MoveRate.REST: energy += restCost*deltaTime; break;
         }
         energy = Mathf.Min(Mathf.Max(energy, 0f), maxEnergy);
-        base.UpdateMotor(deltaTime);
+        
+        
+        float dotp = Vector3.Dot(forceDirection, motorForward);
+        float? forceAngle = null;
+        if (forceMultiplier > 0.1f) 
+        {
+            forceAngle = Mathf.Atan2(forceDirection.y,forceDirection.x);
+        }  
+        float motorAngle = Mathf.Atan2(motorForward.y,motorForward.x);  
+        float diffAngle = forceAngle.HasValue ? (forceAngle.Value - motorAngle) : 0f;
+        if( diffAngle > Mathf.PI )
+        {
+            diffAngle -= Mathf.PI*2f;
+        }
+        if( diffAngle < -Mathf.PI )
+        {
+            diffAngle += Mathf.PI*2f;
+        }
+        
+
+
+        /*if( Mathf.Abs(diffAngle) > Mathf.PI/2 )
+        {
+            velocity = Vector3.zero;
+            Debug.Log ("Flip"+diffAngle);
+            this.transform.Rotate(Vector3.up, (float)Mathf.PI);
+            //mySequence = DOTween.Sequence();
+            //mySequence.Append(transform.DOLookAt(thisTransform.position + backwards, duration, AxisConstraint.None));
+        } 
+        else*/
+        {
+            if( Mathf.Abs(diffAngle) > 0.2f )
+            {
+                rotationVelocity += diffAngle*rotationAccel*deltaTime;
+                rotationVelocity = Mathf.Clamp(rotationVelocity, -rotationMaximum, rotationMaximum);
+				
+                this.transform.Rotate(rotationVelocity*Vector3.forward, Space.World);
+            }
+            else
+            {
+                rotationVelocity = 0;
+            }
+            RecomputeForward();
+			if (forceMultiplier > 0.1f) 
+			{
+                velocity += motorForward * forceMultiplier * forceAccel * deltaTime;
+			}
+            Vector3 velocityDir = velocity.normalized;
+            float dotVelocityMotor = Vector3.Dot(velocityDir, motorForward);
+            float frictionNumber = 1.2f;
+            friction = (frictionNumber-Mathf.Abs(dotVelocityMotor))/frictionNumber;
+            velocity -= velocityDir*friction*frictionDecel*deltaTime;
+            float speed = velocity.magnitude;
+            if( speed > speedMaximum )
+            {
+                velocity = speedMaximum*velocityDir;
+            }
+        }
+        
+        
+        MotorMove(deltaTime, velocity);
+        RecomputeForward();
     } 
     
     

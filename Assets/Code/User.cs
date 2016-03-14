@@ -21,15 +21,13 @@ public class User : MonoBehaviour {
 	    for(int i=0; i<spawners.Count; ++i)
         {
             Spawner spawner = spawners[i];
-            spawner.binding = controller.binding;
-            spawner.remaining = 0;
-            spawner.spawnTimer = new BasicTimer(spawnRate*spawners.Count);
-            spawner.spawnTimer.ShiftOnce(i*spawnRate);
+            spawner.Setup(controller.binding,0,spawnRate*spawners.Count,i*spawnRate);
+
         }
         for(int i=0, j=0; i<spawnCount; ++i, ++j)
         {
             Spawner spawner = spawners[j];
-            spawner.remaining++;
+            spawner.ModifyRemaining(1);
             if( j == spawners.Count-1 )
             {
                 j = 0;

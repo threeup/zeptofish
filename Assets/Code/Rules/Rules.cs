@@ -27,6 +27,7 @@ public class Rules {
         genericRules = new Dictionary<int, Rule>();
         genericRules[(int)ActorEventType.INTERSECT] = new AttachRule();
         genericRules[(int)ActorEventType.SPAWN] = new SpawnRule();
+        genericRules[(int)ActorEventType.EAT] = new EatRule();
         genericRules[(int)ActorEventType.NOISE] = new Rule();
         
     }
@@ -84,7 +85,16 @@ public class SpawnRule : Rule {
         origin.y += Mathf.Cos(randomAngle)*UnityEngine.Random.Range(0f,sourceSpawner.scatterRadius);
         Vector3 forward = sourceSpawner.transform.forward;
         ae.victim = World.Instance.Spawn(sourceSpawner, origin, forward).GetComponent<Actor>();
-        ae.victim.acfg = ConfigManager.Instance.FindActorConfig(sourceSpawner.actorName);
-        ae.victim.BroadcastMessage("Launch");
+        ae.victim.acfg = ConfigManager.Instance.FindActorConfig(sourceSpawner.aspecies);
+        ae.victim.BroadcastMessage("Configure");
+    }
+}
+
+public class EatRule : Rule {
+    public override void Invoke(ref ActorEvent ae)
+    {
+        ae.source.ad.stomach += 10;
+        Debug.Log("Eater "+ae.source+" "+ae.source.ad.stomach);
+        Debug.Log("Eaten "+ae.victim);
     }
 }

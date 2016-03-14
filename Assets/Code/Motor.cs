@@ -8,19 +8,41 @@ public class Motor : MonoBehaviour {
     
     public bool canMove = true;
     
+    [ReadOnly] [SerializeField]
     protected Vector3 velocity;
+    
+    [ReadOnly] [SerializeField]
     protected float speed;
+    
+    [ReadOnly] [SerializeField]
     protected Vector3 forceDirection;
+    
+    [ReadOnly] [SerializeField]
     protected float forceMultiplier;
+    
+    [ReadOnly] [SerializeField]
     protected float forceAccel;
     
+    [ReadOnly] [SerializeField]
     protected float frictionDecel;
     
+    [ReadOnly] [SerializeField]
     protected float friction;
     
+    [ReadOnly] [SerializeField]
     protected float speedMaximum;
+    
+    
+    [ReadOnly] [SerializeField]
+    protected float rotationAccel;
+    
+    [ReadOnly] [SerializeField]
+    protected float rotationVelocity;
+    
+    [ReadOnly] [SerializeField]
+    protected float rotationMaximum;
         
-    Vector3 motorForward = Vector3.one;
+    protected Vector3 motorForward = Vector3.one;
     public Vector3 MotorForward { get { return motorForward; } }
     
 	void Reset () {
@@ -33,13 +55,14 @@ public class Motor : MonoBehaviour {
         this.body = actor.body;
     }
     
-    public void Launch()
+    public void Configure()
     {
         ActorConfig cfg = actor.acfg;
         this.forceAccel = cfg.forceAccel;
-        this.frictionDecel = cfg.frictionDecel;
-        //this.rotationAccel = cfg.rotationAccel;
         this.speedMaximum = cfg.speedMaximum;
+        this.frictionDecel = cfg.frictionDecel;
+        this.rotationAccel = cfg.rotationAccel;
+        this.rotationMaximum = 0.7f;//cfg.rotationMaximum;
     }
 	
     public virtual void SetDesiredMoveVector(Vector3 desiredMoveVector)
@@ -47,8 +70,8 @@ public class Motor : MonoBehaviour {
         forceMultiplier = desiredMoveVector.magnitude;
         forceDirection = desiredMoveVector.normalized;
     }
-	public virtual void UpdateMotor(float deltaTime) {
-        
+	public virtual void UpdateMotor(float deltaTime) 
+    {
         velocity += forceDirection*forceMultiplier*forceAccel*deltaTime;
         Vector3 velocityDir = velocity.normalized;
         velocity -= velocityDir*frictionDecel*deltaTime;
@@ -78,7 +101,7 @@ public class Motor : MonoBehaviour {
     protected void RecomputeForward()
     {
         motorForward = this.transform.forward;
-        motorForward.x = 0;
+        //motorForward.z = 0;
     }
     
     public virtual void SafeMove(Vector3 desiredPos)
@@ -122,6 +145,7 @@ public class Motor : MonoBehaviour {
         }
         this.transform.position = desiredPos;
     }
+    
     
     protected virtual void OnCollideMinX() { }
     protected virtual void OnCollideMaxX() { }

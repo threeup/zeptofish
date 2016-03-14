@@ -8,17 +8,20 @@ public class Pawn : Actor {
     [SerializeField]
     private int stomachCapacity;
     [SerializeField]
-    private int stomach;
-    [SerializeField]
     private float stomachPeriod;
     
     private BasicTimer stomachTimer;
     
+    private BasicTimer biteTimer;
+    
     [HideInInspector]
     public PawnController controller;
     
-    public PawnInputData lastInput;
-    public PawnInputData curInput;
+    [ReadOnly] [SerializeField]
+    private PawnInputData lastInput;
+    
+    [ReadOnly] [SerializeField]
+    private PawnInputData curInput;
     
 	// Use this for initialization
 	public override void Reset()
@@ -33,15 +36,22 @@ public class Pawn : Actor {
         
     }
     
-    public override void Launch()
+    public override void Configure()
     {
+        base.Configure();
         stomachPeriod = acfg.stomachPeriod;
         if( stomachPeriod > 0.01f)
         {
             stomachTimer = new BasicTimer(acfg.stomachPeriod);
         }
         stomachCapacity = acfg.stomachCapacity;
-        stomach = stomachCapacity;
+        ad.stomach = acfg.stomachCapacity;
+        
+        float biteTimerPeriod = 1f;//acfg.biteTimerPeriod;
+        if( biteTimerPeriod > 0.01f)
+        {
+            biteTimer = new BasicTimer(biteTimerPeriod);
+        }
         
     }
 	
@@ -55,7 +65,7 @@ public class Pawn : Actor {
         motor.SetDesiredMoveVector(desiredMoveVector);
         
         motor.UpdateMotor(deltaTime);
-        UpdateAttached();
+        UpdateAttached(deltaTime);
         
         if( stomachTimer != null && stomachTimer.Tick(deltaTime) )
         {
@@ -67,6 +77,32 @@ public class Pawn : Actor {
         }
     }
     
+    protected override void UpdateAttached(float deltaTime)
+    {
+        bool bite = attached.Count > 0 && biteTimer != null && biteTimer.Tick(deltaTime);
+        if( attached.Count > 0 )
+        {
+            Vector3 forwardOffset = this.transform.forward;
+            float forwardAngle = Mathf.Atan2(forwardOffset.y, forwardOffset.x);
+            foreach(Actor child in attached)
+            {
+                float angle = forwardAngle + child.attachOffset;
+                
+                Vector3 offsetPosition = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f);
+                float attachRadius = 1.8f;
+                child.SetPosition(attachBone.position + offsetPosition*attachRadius);
+                if( bite )
+                {
+                    child.ad.hp -= 1;
+                    if( child.ad.hp == 0)
+                    {
+                        ActorEvent ae = new ActorEvent(this, child, ActorEventType.EAT);
+                        HandleEvent(ref ae);
+                    }
+                }
+            }
+        }
+    }
     
     public void AddToStomach(int amount)
     {

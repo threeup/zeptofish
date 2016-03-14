@@ -16,6 +16,7 @@ public enum ActorEventType
 {
     INTERSECT,
     SPAWN,
+    EAT,
     NOISE,    
 }
 [System.Serializable]

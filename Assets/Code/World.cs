@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using BasicCommon;
 
 public class World : SceneSingletonBehaviour<World> {
@@ -14,6 +15,9 @@ public class World : SceneSingletonBehaviour<World> {
     public Bounds waterBounds;
     public Bounds hookBounds;
     public Bounds surfaceBounds;
+    
+    private List<Actor> activeActors = new List<Actor>();
+    public List<Actor> ActiveActors { get { return activeActors; } }
 
     
     void Awake()
@@ -36,12 +40,15 @@ public class World : SceneSingletonBehaviour<World> {
     {
         Quaternion rot = Quaternion.LookRotation(forward, Vector3.up);
         GameObject go = GameObject.Instantiate(spawner.actorPrefab, pos, rot) as GameObject;
-        spawner.remaining--;
+        spawner.ModifyRemaining(-1);
+        Actor actor = go.GetComponent<Actor>();
+        actor.liveableArea = spawner.liveableArea;
         PawnController pawnController = go.GetComponent<PawnController>();
         if( pawnController != null )
         {
-            pawnController.binding = spawner.binding;
+            pawnController.binding = spawner.Binding;
         }
+        activeActors.Add(actor);
         return go;
     }
 }

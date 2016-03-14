@@ -23,23 +23,18 @@ public class ConfigManager : MonoBehaviour
     }
     void Start()
     {
-        
-        // Set the file path to Unity's Streaming Assets folder, location in
-        // Assets/StreamingAssets/
+        LoadConfig();
+    }
+    
+    public void LoadConfig()
+    {
         string configFilePath = ConfigUtils.GetFilePath(category);
         ConfigUtils.LoadConfig(configFilePath, out currentConfig);
     }
     
-    public ActorConfig FindActorConfig(string name)
+    public ActorConfig FindActorConfig(ActorSpecies aspecies)
     {
-        foreach(ActorConfig acfg in currentConfig.actorCfgs)
-        {
-            if( string.Compare(acfg.name, name) == 0 )
-            {
-                return acfg;
-            }
-        }
-        return null;
+        return System.Array.Find(currentConfig.actorCfgs,x=>x.aspecies == aspecies);
     }
 
 }

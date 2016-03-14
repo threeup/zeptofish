@@ -21,5 +21,15 @@ public class Boss : SceneSingletonBehaviour<Boss> {
 	
     }
     
+    public void ReloadConfig()
+    {
+        ConfigManager.Instance.LoadConfig();
+        foreach(Actor a in World.Instance.ActiveActors)
+        {
+            ActorSpecies oldSpecies = a.acfg.aspecies;
+            a.acfg = ConfigManager.Instance.FindActorConfig(oldSpecies);
+            a.BroadcastMessage("Configure");
+        }
+    }
    
 }

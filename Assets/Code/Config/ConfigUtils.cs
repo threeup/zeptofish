@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 using ProtoBuf;
 
 // We need to utilize some features of System.IO for this
@@ -17,7 +18,7 @@ public class ConfigUtils
         cfg = new RuleConfig();
 
         cfg.gameCfg = new GameConfig();
-        cfg.actorCfgs = new ActorConfig[4];
+        
         cfg.levelCfgs = new LevelConfig[3];
         
         
@@ -29,30 +30,27 @@ public class ConfigUtils
         cfg.levelCfgs[1] = new LevelConfig();
         cfg.levelCfgs[2] = new LevelConfig();
         
-        cfg.actorCfgs[0] = new ActorConfig();
-        cfg.actorCfgs[0].atype = ActorType.HOOK;
-        cfg.actorCfgs[0].amodel = ActorModel.HookNormal;
-        cfg.actorCfgs[0].hp = 20;
-        cfg.actorCfgs[0].size = 20;
+        List<ActorConfig> actorCfgList = new List<ActorConfig>();
+        var speciesVals = System.Enum.GetValues(typeof(ActorSpecies));
+        foreach(var species in speciesVals)
+        {
+            ActorConfig acfg = new ActorConfig();
+            acfg.aspecies = (ActorSpecies)species;
+            actorCfgList.Add(acfg);
+        }
         
-        cfg.actorCfgs[1] = new ActorConfig();
-        cfg.actorCfgs[1].atype = ActorType.BOAT;
-        cfg.actorCfgs[1].amodel = ActorModel.BoatNormal;
-        cfg.actorCfgs[1].hp = 2000;
-        cfg.actorCfgs[1].size = 50;
+        ActorConfig hookCfg = actorCfgList.Find(x=>x.aspecies == ActorSpecies.HookNormal);
+        hookCfg.atype = ActorType.HOOK;
+        hookCfg.hp = 20;
+        hookCfg.size = 20;
         
+        ActorConfig boatCfg = actorCfgList.Find(x=>x.aspecies == ActorSpecies.BoatNormal);
+        boatCfg.atype = ActorType.BOAT;
+        boatCfg.hp = 2000;
+        boatCfg.size = 50;
+               
+        cfg.actorCfgs = actorCfgList.ToArray(); 
                 
-        cfg.actorCfgs[2] = new ActorConfig();
-        cfg.actorCfgs[2].atype = ActorType.FOOD;
-        cfg.actorCfgs[2].amodel = ActorModel.FoodSmall;
-        cfg.actorCfgs[2].hp = 1;
-        cfg.actorCfgs[2].size = 1;
-        
-        cfg.actorCfgs[3] = new ActorConfig();
-        cfg.actorCfgs[3].atype = ActorType.FISH;
-        cfg.actorCfgs[3].amodel = ActorModel.FishMediumAlpha;
-        cfg.actorCfgs[3].hp = 10;
-        cfg.actorCfgs[3].size = 10;
     }
     /// <summary>
     /// Saves a cfg to file
