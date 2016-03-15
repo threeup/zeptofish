@@ -41,6 +41,10 @@ public class Actor : MonoBehaviour {
     {
         motor = this.GetComponent<Motor>();
         body = this.GetComponentInChildren<ActorBody>();
+        if( body != null )
+        {
+            body.actor = this;
+        }
     }
     
     public virtual void Configure()
@@ -49,6 +53,7 @@ public class Actor : MonoBehaviour {
         ad = new ActorData();
         ad.hp = acfg.hp;
         ad.stomach = 0;
+        body.UpdateScale();
     }
     
     public virtual void Update()
@@ -64,8 +69,9 @@ public class Actor : MonoBehaviour {
         {
             Vector3 forwardOffset = this.transform.forward;
             float forwardAngle = Mathf.Atan2(forwardOffset.y, forwardOffset.x);
-            foreach(Actor child in attached)
+            for(int i=attached.Count-1; i>=0; --i)
             {
+                Actor child = attached[i];
                 float angle = forwardAngle + child.attachOffset;
                 
                 Vector3 offsetPosition = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f);
@@ -97,5 +103,36 @@ public class Actor : MonoBehaviour {
         other.attachOffset = offset;
         other.attachParent = this;
         this.attached.Add(other);
+    }
+    
+    public void DetachAll()
+    {
+        if( attached.Count > 0 )
+        {
+            foreach(Actor child in attached)
+            {
+                child.motor.canMove = true;
+                child.attachParent = null;
+            }
+            this.attached.Clear();
+        }
+        if( attachParent != null )
+        {
+            attachParent.attached.Remove(this);
+            this.motor.canMove = true;
+            this.attachParent = null;
+        }
+    }
+    
+    public void Die()
+    {
+        DetachAll();
+        World.Instance.Despawn(this);     
+    }
+    
+    public void LevelUp()
+    {
+        this.ad.size += 1;
+        this.body.UpdateScale();
     }
 }

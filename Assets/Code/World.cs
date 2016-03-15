@@ -51,4 +51,10 @@ public class World : SceneSingletonBehaviour<World> {
         activeActors.Add(actor);
         return go;
     }
+    
+    public void Despawn(Actor actor)
+    {
+        activeActors.Remove(actor);
+        Destroy(actor.gameObject);
+    }
 }

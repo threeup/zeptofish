@@ -93,8 +93,20 @@ public class SpawnRule : Rule {
 public class EatRule : Rule {
     public override void Invoke(ref ActorEvent ae)
     {
-        ae.source.ad.stomach += 10;
-        Debug.Log("Eater "+ae.source+" "+ae.source.ad.stomach);
-        Debug.Log("Eaten "+ae.victim);
+        ae.source.ad.stomach += ae.victim.acfg.protein;
+        while( ae.source.ad.stomach > ae.source.acfg.stomachCapacity )
+        {
+            if(ae.source.ad.size < ae.source.acfg.maxSize)
+            {
+                ae.source.ad.stomach -= ae.source.acfg.stomachCapacity;
+                ae.source.LevelUp();
+            }
+            else
+            {
+                ae.source.ad.stomach = ae.source.acfg.stomachCapacity;
+                break;
+            }
+        }
+        ae.victim.Die();
     }
 }

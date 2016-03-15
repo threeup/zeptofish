@@ -36,18 +36,29 @@ public class ConfigUtils
         {
             ActorConfig acfg = new ActorConfig();
             acfg.aspecies = (ActorSpecies)species;
+            string speciesName = acfg.aspecies.ToString().ToLower();
+            if( speciesName.StartsWith("fish") )
+            {
+                acfg.atype = ActorType.FISH;
+            } 
+            else if( speciesName.StartsWith("hook") )
+            {
+                acfg.atype = ActorType.HOOK;
+            }
+            if( speciesName.StartsWith("boat") )
+            {
+                acfg.atype = ActorType.BOAT;
+            }
             actorCfgList.Add(acfg);
         }
         
         ActorConfig hookCfg = actorCfgList.Find(x=>x.aspecies == ActorSpecies.HookNormal);
         hookCfg.atype = ActorType.HOOK;
         hookCfg.hp = 20;
-        hookCfg.size = 20;
         
         ActorConfig boatCfg = actorCfgList.Find(x=>x.aspecies == ActorSpecies.BoatNormal);
         boatCfg.atype = ActorType.BOAT;
         boatCfg.hp = 2000;
-        boatCfg.size = 50;
                
         cfg.actorCfgs = actorCfgList.ToArray(); 
                 

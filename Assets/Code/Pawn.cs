@@ -33,7 +33,6 @@ public class Pawn : Actor {
     {
         base.Awake();
         controller = GetComponent<PawnController>();
-        
     }
     
     public override void Configure()
@@ -84,17 +83,22 @@ public class Pawn : Actor {
         {
             Vector3 forwardOffset = this.transform.forward;
             float forwardAngle = Mathf.Atan2(forwardOffset.y, forwardOffset.x);
-            foreach(Actor child in attached)
+            for(int i=attached.Count-1; i>=0; --i)
             {
+                Actor child = attached[i];
                 float angle = forwardAngle + child.attachOffset;
                 
                 Vector3 offsetPosition = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f);
                 float attachRadius = 1.8f;
                 child.SetPosition(attachBone.position + offsetPosition*attachRadius);
-                if( bite )
+            }
+            if( bite )
+            {
+                for(int i=attached.Count-1; i>=0; --i)
                 {
+                    Actor child = attached[i];
                     child.ad.hp -= 1;
-                    if( child.ad.hp == 0)
+                    if( child.ad.hp < 0)
                     {
                         ActorEvent ae = new ActorEvent(this, child, ActorEventType.EAT);
                         HandleEvent(ref ae);
@@ -102,13 +106,7 @@ public class Pawn : Actor {
                 }
             }
         }
-    }
-    
-    public void AddToStomach(int amount)
-    {
-        ad.stomach = Mathf.Min(ad.stomach+amount, stomachCapacity);
-    }
+    }  
     
     
-
 }

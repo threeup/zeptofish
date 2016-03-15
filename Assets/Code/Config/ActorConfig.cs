@@ -36,36 +36,42 @@ public class ActorConfig
     [ProtoMember(3)]
     public ActorSpecies aspecies;
     
-    [ProtoMember(4)]
+    [ProtoMember(10)]
     public float scale;
     
-    [ProtoMember(5)]
+    [ProtoMember(20)]
     public int hp;
-    [ProtoMember(6)]
-    public int size;
-    [ProtoMember(7)]
+    [ProtoMember(21)]
+    public int minSize;
+    [ProtoMember(22)]
+    public int maxSize;
+    [ProtoMember(23)]
+    public int protein;
+    [ProtoMember(24)]
     public int stomachCapacity;
-    [ProtoMember(8)]
+    [ProtoMember(25)]
     public float stomachPeriod;
     
-    [ProtoMember(9)]
+    [ProtoMember(30)]
     public float forceAccel;
-    [ProtoMember(10)]
+    [ProtoMember(31)]
     public float frictionDecel;
-    [ProtoMember(11)]
+    [ProtoMember(32)]
     public float rotationAccel;
-    [ProtoMember(12)]
+    [ProtoMember(33)]
     public float speedMaximum;
     
     public ActorConfig()
     {
         scale = 1.0f;
-        hp = 10;
-        size = 10;
-        stomachCapacity = 10;
-        stomachPeriod = 10;
+        hp = 1;
+        minSize = 1;
+        maxSize = 1;
+        protein = 1;
+        stomachCapacity = 1;
+        stomachPeriod = 1;
         forceAccel = 1.2f;
-        frictionDecel = 0.6f;
+        frictionDecel = 1.0f;
         rotationAccel = 1.0f;
         speedMaximum = 3f;
     }
