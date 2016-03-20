@@ -26,7 +26,7 @@ public class Rules {
         
         genericRules = new Dictionary<int, Rule>();
         genericRules[(int)ActorEventType.INTERSECT] = new AttachRule();
-        genericRules[(int)ActorEventType.SPAWN] = new SpawnRule();
+        genericRules[(int)ActorEventType.SPAWNED] = new SpawnedRule();
         genericRules[(int)ActorEventType.EAT] = new EatRule();
         genericRules[(int)ActorEventType.NOISE] = new Rule();
         
@@ -57,6 +57,12 @@ public class Rules {
     {
         return genericRules[(int)aetype];
     }
+    
+    public static void ProcessEvent(ref ActorEvent ae)
+    {
+        Rule r = GetGameRule(ae.aetype);
+        r.Invoke(ref ae);
+    }
 }
 
 public class Rule {
@@ -75,18 +81,10 @@ public class AttachRule : Rule {
     }
 }
 
-public class SpawnRule : Rule {
+public class SpawnedRule : Rule {
     public override void Invoke(ref ActorEvent ae)
     {
-        Spawner sourceSpawner = ae.source as Spawner;
-        Vector3 origin = sourceSpawner.AttachBonePosition;
-        float randomAngle = Utils.RandomAngle();
-        origin.x += Mathf.Sin(randomAngle)*UnityEngine.Random.Range(0f,sourceSpawner.scatterRadius);
-        origin.y += Mathf.Cos(randomAngle)*UnityEngine.Random.Range(0f,sourceSpawner.scatterRadius);
-        Vector3 forward = sourceSpawner.transform.forward;
-        ae.victim = World.Instance.Spawn(sourceSpawner, origin, forward).GetComponent<Actor>();
-        ae.victim.acfg = ConfigManager.Instance.FindActorConfig(sourceSpawner.aspecies);
-        ae.victim.BroadcastMessage("Configure");
+        ae.source.BroadcastMessage("Configure");
     }
 }
 

@@ -36,7 +36,7 @@ public class ActorBody : MonoBehaviour
         
         float fromMiddle = actor.ad.size - minToMax/2.0f;
         
-        float relativeScale = 1.0f+fromMiddle*0.25f;
+        float relativeScale = 1.0f+fromMiddle*0.15f;
         
         this.transform.localScale = Vector3.one*relativeScale;
     }

@@ -36,7 +36,7 @@ public class World : SceneSingletonBehaviour<World> {
         return new Bounds(Vector3.zero, Vector3.zero);
     }
 
-    public GameObject Spawn(Spawner spawner, Vector3 pos, Vector3 forward)
+    public GameObject Spawn(Spawner spawner, ActorConfig acfg, Vector3 pos, Vector3 forward)
     {
         Quaternion rot = Quaternion.LookRotation(forward, Vector3.up);
         GameObject go = GameObject.Instantiate(spawner.actorPrefab, pos, rot) as GameObject;
@@ -49,6 +49,9 @@ public class World : SceneSingletonBehaviour<World> {
             pawnController.binding = spawner.Binding;
         }
         activeActors.Add(actor);
+        actor.acfg = acfg;
+        ActorEvent ae = new ActorEvent(actor, null, ActorEventType.SPAWNED);
+        Rules.ProcessEvent(ref ae);
         return go;
     }
     

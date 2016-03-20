@@ -2,10 +2,12 @@ using UnityEngine;
 using System.Collections;
 using BasicCommon;
 
-public class Spawner : Actor {
+public class Spawner : MonoBehaviour {
 
+    private Actor actor;
     public GameObject actorPrefab;
     public ActorSpecies aspecies;
+    public World.LiveableArea liveableArea;
     private ControllerBinding binding;
     public ControllerBinding Binding { get { return binding; } }
     
@@ -17,13 +19,16 @@ public class Spawner : Actor {
     public float scatterRadius = 0.5f;
     
 	// Use this for initialization
-	public override void Reset()
+	public void Reset()
     {
-	   base.Reset();
        binding = ControllerBinding.NONE;
        remaining = 1;
-       attachBone = this.transform;
 	}
+    
+    void Awake()
+    {
+        actor = GetComponent<Actor>();
+    }
     
     public void Setup(ControllerBinding binding, int remaining, float period, float offset)
     {
@@ -39,22 +44,30 @@ public class Spawner : Actor {
     }
 	
 	// Update is called once per frame
-	public override void Update()
+	public void Update()
     { 
         float deltaTime = Time.deltaTime;
         if( remaining > 0 && spawnTimer != null && spawnTimer.Tick(deltaTime) )
         {
-            ActorEvent ae = new ActorEvent(this, null, ActorEventType.SPAWN);
-            HandleEvent(ref ae);
-            
+            ActorConfig acfg = ConfigManager.Instance.FindActorConfig(this.aspecies);
+            World.Instance.Spawn(this, acfg, GetSpawnPosition(), transform.forward).GetComponent<Actor>();
         }
     }
-    
+        
     public void OnDrawGizmos()
     {
         Color c = remaining > 0 ? new Color(1f,0.5f,0.2f,0.7f) : new Color(0.2f,0.2f,0.2f,0.1f); 
         Gizmos.color = c;
         Gizmos.DrawSphere(transform.position, 1.1f);
         Gizmos.DrawCube(transform.position+transform.forward, new Vector3(1, 1, 1));
+    }
+    
+    public Vector3 GetSpawnPosition()
+    {
+        Vector3 spawnPos = this.transform.position;
+        float randomAngle = Utils.RandomAngle();
+        spawnPos.x += Mathf.Sin(randomAngle)*UnityEngine.Random.Range(0f,scatterRadius);
+        spawnPos.y += Mathf.Cos(randomAngle)*UnityEngine.Random.Range(0f,scatterRadius);
+        return spawnPos;
     }
 }

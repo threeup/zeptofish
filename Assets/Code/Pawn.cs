@@ -46,7 +46,7 @@ public class Pawn : Actor {
         stomachCapacity = acfg.stomachCapacity;
         ad.stomach = acfg.stomachCapacity;
         
-        float biteTimerPeriod = 1f;//acfg.biteTimerPeriod;
+        float biteTimerPeriod = 8f;//acfg.biteTimerPeriod;
         if( biteTimerPeriod > 0.01f)
         {
             biteTimer = new BasicTimer(biteTimerPeriod);
@@ -78,31 +78,18 @@ public class Pawn : Actor {
     
     protected override void UpdateAttached(float deltaTime)
     {
+        base.UpdateAttached(deltaTime);
         bool bite = attached.Count > 0 && biteTimer != null && biteTimer.Tick(deltaTime);
-        if( attached.Count > 0 )
+        if( bite && attached.Count > 0 )
         {
-            Vector3 forwardOffset = this.transform.forward;
-            float forwardAngle = Mathf.Atan2(forwardOffset.y, forwardOffset.x);
             for(int i=attached.Count-1; i>=0; --i)
             {
                 Actor child = attached[i];
-                float angle = forwardAngle + child.attachOffset;
-                
-                Vector3 offsetPosition = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f);
-                float attachRadius = 1.8f;
-                child.SetPosition(attachBone.position + offsetPosition*attachRadius);
-            }
-            if( bite )
-            {
-                for(int i=attached.Count-1; i>=0; --i)
+                child.ad.hp -= 1;
+                if( child.ad.hp < 0)
                 {
-                    Actor child = attached[i];
-                    child.ad.hp -= 1;
-                    if( child.ad.hp < 0)
-                    {
-                        ActorEvent ae = new ActorEvent(this, child, ActorEventType.EAT);
-                        HandleEvent(ref ae);
-                    }
+                    ActorEvent ae = new ActorEvent(this, child, ActorEventType.EAT);
+                    Rules.ProcessEvent(ref ae);
                 }
             }
         }

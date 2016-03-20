@@ -52,6 +52,7 @@ public class Actor : MonoBehaviour {
         configName = acfg.aspecies.ToString();
         ad = new ActorData();
         ad.hp = acfg.hp;
+        ad.size = acfg.minSize;
         ad.stomach = 0;
         body.UpdateScale();
     }
@@ -72,7 +73,7 @@ public class Actor : MonoBehaviour {
             for(int i=attached.Count-1; i>=0; --i)
             {
                 Actor child = attached[i];
-                float angle = forwardAngle + child.attachOffset;
+                float angle = forwardAngle - child.attachOffset;
                 
                 Vector3 offsetPosition = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f);
                 float attachRadius = 1.8f;
@@ -85,13 +86,7 @@ public class Actor : MonoBehaviour {
     {
         motor.SafeMove(vec);
     }
-    
-    public virtual void HandleEvent(ref ActorEvent ae)
-    {
-        Rule r = Rules.GetGameRule(ae.aetype);
-        r.Invoke(ref ae);
-    }
-    
+        
     public void AttachChild(Actor other)
     {
         

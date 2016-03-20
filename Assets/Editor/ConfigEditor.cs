@@ -21,7 +21,21 @@ class ConfigEditor : EditorWindow {
     bool resetConfirm = false;
     
     void OnGUI () {
-        RuleConfigCategory nextCategory = (RuleConfigCategory)EditorGUILayout.EnumPopup("Cfg Category:", category); 
+        RuleConfigCategory nextCategory = (RuleConfigCategory)EditorGUILayout.EnumPopup("Cfg Category:", category);
+        if (GUILayout.Button("Refresh "+category))
+        {
+            string configFilePath = ConfigUtils.GetFilePath(category);
+            ConfigUtils.LoadConfig(configFilePath, out workingConfig);
+            lastLoaded = category.ToString();
+        } 
+        Boss boss = Boss.Instance;
+        if(boss != null)
+        {
+            if (GUILayout.Button("Game Apply "+category))
+            {
+                boss.ReloadConfig();
+            }
+        }
         if( nextCategory != category )
         {
             category = nextCategory;

@@ -15,7 +15,7 @@ public enum ControllerBinding
 public enum ActorEventType
 {
     INTERSECT,
-    SPAWN,
+    SPAWNED,
     EAT,
     NOISE,    
 }
