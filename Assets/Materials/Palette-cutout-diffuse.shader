@@ -16,7 +16,7 @@ Shader "Palette Shaders/Diffuse" {
 		BlendOp Max
 
 		CGPROGRAM
-		#pragma surface surf Lambert vertex:vert finalcolor:dither alphatest:_Cutoff
+		#pragma surface surf SimpleLambert vertex:vert finalcolor:dither alphatest:_Cutoff
 		#include "CGIncludes/Palette.cginc"
 
 		float4 _Color;
@@ -26,7 +26,7 @@ Shader "Palette Shaders/Diffuse" {
 		float _ColorCount;
 		float _PaletteHeight;
 		
-
+       
 		struct Input {
 			float2 uv_MainTex;
 		};
@@ -44,7 +44,7 @@ Shader "Palette Shaders/Diffuse" {
 		void dither(Input i, SurfaceOutput o, inout fixed4 color) {
 			color.rgb = GetPaletteColor(color.rgb, _PaletteTex,
 				_PaletteHeight, _ColorCount);
-            color *= _HighlightColor;
+            //color *= _HighlightColor;
 		}
 		ENDCG
 	}

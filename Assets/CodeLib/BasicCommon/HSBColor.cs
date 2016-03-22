@@ -7,6 +7,18 @@ public struct HSBColor
     public float s;
     public float b;
     public float a;
+    
+    public float TopLeft { get { return 10*(Mathf.Round(h*32f)/32f) + 2*s - 2*b; } }
+    
+    public int RoundedHue(float count)
+    {
+        return (int)Mathf.Round(h*count);
+    }
+    
+    public int RoundedSatBr(float count)
+    {
+        return (int)Mathf.Round(s*count);
+    }
  
     public HSBColor(float h, float s, float b, float a)
     {

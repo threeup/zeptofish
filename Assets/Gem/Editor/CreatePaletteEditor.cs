@@ -76,6 +76,64 @@ public class CreatePaletteEditor : Editor {
          
         Debug.LogWarning("paletteColors "+paletteColors.Count +" W"+colorTexture.width+" H"+colorTexture.height);
 
+        List<HSBColor> hsbColors = GetSortedHSB(paletteColors);
+        
+        int columns = 32;
+        
+        Texture2D paletteTexture = new Texture2D(columns, 5, TextureFormat.RGB24, false);
+		paletteTexture.name = colorTexture.name + "_pal";
+        
+        int colorIdx = 0;
+        int workingHue = 0;
+        int workingSatBr = 0;
+        int lastHue = 0;
+        int rows = 5;
+        for(int x=0; x<columns; ++x)
+        {
+            lastHue = x;
+            List<HSBColor> matches = new List<HSBColor>();
+            for(int c=0; c < paletteColors.Count; ++c)
+            {
+                HSBColor color = hsbColors[c];
+                workingHue = color.RoundedHue(columns);
+                if( Mathf.Abs(workingHue - lastHue) <= 0 )
+                { 
+                    matches.Add(color);
+                }
+            }
+            matches.Sort((h1,h2)=>h1.TopLeft.CompareTo(h2.TopLeft));
+            int miss = 0;
+            if( matches.Count > 0 )
+            {
+                while(matches.Count < rows)
+                {
+                    int half = matches.Count/2;
+                    matches.Insert(half, matches[half]);
+                }
+            }
+            for(int y=0; y<rows; ++y)
+            {
+                bool found = false;
+                if( matches.Count == 0 )
+                {
+                    if ( x == 0  )
+                    {
+                        paletteTexture.SetPixel(x, y, Color.black);
+                    }
+                    else 
+                    {
+                        paletteTexture.SetPixel(x, y, paletteTexture.GetPixel( x-1, y ));
+                    }
+                }
+                else
+                {
+                    HSBColor color = matches[y];
+                    paletteTexture.SetPixel(x, y, HSBColor.ToColor(color));
+                }
+                
+            }
+        }
+/*
         
 		uint[] palette = new uint[paletteColors.Count];
 		for (int i = 0; i < paletteColors.Count; i++)
@@ -103,11 +161,22 @@ public class CreatePaletteEditor : Editor {
 				for (int c = 0; c < script.MixedColorCount; c++)
 					paletteTexture.SetPixel(x, y + (script.MixedColorCount - c - 1) * ColorSquares, paletteColors[(int)mixingPlan[c]]);
 			}
-        }
+        }*/
 
 		// Save the palette image
 		SaveTexture(paletteTexture);
 	}
+    
+    private List<HSBColor> GetSortedHSB(List<Color> colors)
+    {
+        List<HSBColor> hsbs = new List<HSBColor>();
+        foreach(Color c in colors)
+        {
+            hsbs.Add(HSBColor.FromColor(c));
+        }
+        hsbs.Sort((h1,h2)=>h1.TopLeft.CompareTo(h2.TopLeft));
+        return hsbs;
+    }
 
 	/// <summary>
 	///  Opens a file dialog and loads a .png image to a Texture2D.
