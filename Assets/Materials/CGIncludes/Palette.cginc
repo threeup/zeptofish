@@ -11,26 +11,52 @@ half4 LightingSimpleLambert (SurfaceOutput s, half3 lightDir, half atten) {
     return c;
 }
 
-inline fixed3 GetPaletteColor(fixed3 color, sampler2D paletteTex,
-							 float paletteHeight, float colorCount) {
-	// To find the palette color to use for this pixel:
-	//	The row offset decides which row of color squares to use.
-	//	The red component decides which column of color squares to use.
-	//	The green and blue components points to the color in the 16x16 pixel square.
-	
-    float2 paletteUV = 0;
-    if(color.b > 220)
+inline fixed3 Palletize(fixed3 color, sampler2D paletteTex)
+{
+    
+    float hue = 0;
+    float sat = 0;
+    float bright = 0;
+    float mx = max(color.r, max(color.g, color.b));
+    float mn = min(color.r, min(color.g, color.b));
+    float dif = mx - mn;
+ 
+    
+    if (color.g == mx)
     {
-        paletteUV.x = 1;
-        paletteUV.y = 0;
+        hue = (color.b - color.r) / dif * 0.16667 + 0.33333;
     }
-    return tex2D(paletteTex, paletteUV).rgb;
-	/*float2 paletteUV = float2(
-		min(floor(color.r * 16), 15) / 16 + clamp(color.b * 16, 0.5, 15.5) / 256,
-		(clamp(color.g * 16, 0.5, 15.5) + floor(colorCount) * 16) / paletteHeight);
+    else if (color.b == mx)
+    {
+        hue = (color.r - color.g) / dif * 0.16667 + 0.66667;
+    }
+    else if (color.b > color.g)
+    {
+        hue = (color.g - color.b) / dif * 0.16667 + 1;
+    }
+    else
+    {
+        hue = (color.g - color.b) / dif * 0.16667;
+    }
+    if (hue < 0)
+    {
+        hue = hue + 1;
+    }
+ 
+    sat = clamp(dif / mx, 0, 1);
+    bright = mx;
+        
+    
+    hue = clamp(round(hue*24)/24, 0.01, 0.99);
+    sat = round(sat*3)/3;
+    bright = clamp(round(bright*3)/3, 0.01, 0.99);
 
-	// Return the new color from the palette texture
-	return tex2D(paletteTex, paletteUV).rgb;*/
+    float position = sat*3+bright;
+    float2 paletteUV = float2(hue, position/4); 
+            
+    return tex2D(paletteTex, paletteUV).rgb;
+        
+    
 }
 
 #endif
